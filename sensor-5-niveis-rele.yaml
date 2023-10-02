@@ -4,7 +4,7 @@ substitutions:
   room: ""
   device_description: "Sensor de 5 Niveis com relê"
   project_name: "Automakaza.Sensor 5 Niveis V2"
-  project_version: "2.0"
+  project_version: "2.01"
   relay_restore_mode: RESTORE_DEFAULT_OFF
 
 esphome:
