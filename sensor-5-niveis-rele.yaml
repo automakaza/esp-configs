@@ -92,7 +92,7 @@ output:
   - platform: ledc
     pin: 21
     id: led_erro
-    frequency: 1000
+    frequency: 10
 
 light:
   - platform: binary
