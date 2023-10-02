@@ -1,13 +1,22 @@
+substitutions:
+  name: "sensor-5n-v2"
+  friendly_name: "Sensor 5 Niveis-V2"
+  room: ""
+  device_description: "Sensor de 5 Niveis com relê"
+  project_name: "Automakaza.Sensor 5 Niveis V2"
+  project_version: "2.0"
+  relay_restore_mode: RESTORE_DEFAULT_OFF
+
 esphome:
-  name: sensor-5n-v2
-  friendly_name: Sensor 5 Niveis-V2
-  name_add_mac_suffix: true
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  project:
+    name: "${project_name}"
+    version: "${project_version}"
+#  name_add_mac_suffix: true
 
 esp32:
   board: esp32dev
-
-  framework:
-    type: arduino
 
 # Enable logging
 logger:
@@ -29,14 +38,17 @@ wifi:
 # ativa um hotspot (captive portal) caso a conexão wifi falhe
 captive_portal:
 
+dashboard_import:
+  package_import_url: github://automakaza/esp-configs/sensor-5-niveis-rele.yaml
+
 # Ativa um webserver com todos os recursos instalados.
 web_server:
   port: 80
   local: True
   version: 2
   ota: True
-  #css_url: "https://raw.githubusercontent.com/emilioaray-dev/esphome_static_webserver/main/webserver-v2.css"
-  #js_url: "https://raw.githubusercontent.com/emilioaray-dev/esphome_static_webserver/main/webserver-v2.js"
+#  css_url: "https://raw.githubusercontent.com/emilioaray-dev/esphome_static_webserver/main/webserver-v2.css"
+#  js_url: "https://raw.githubusercontent.com/emilioaray-dev/esphome_static_webserver/main/webserver-v2.js"
 
   #auth:
     #username: admin
@@ -417,6 +429,3 @@ sensor:
                  id(rele10a).turn_off();
                  }
                }
-
-
-    
