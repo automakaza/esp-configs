@@ -4,7 +4,7 @@ substitutions:
   room: ""
   device_description: "Sensor de 5 Niveis com relê"
   project_name: "Automakaza.Sensor 5 Niveis V2"
-  project_version: "2.01"
+  project_version: "2.02"
   relay_restore_mode: RESTORE_DEFAULT_OFF
 
 esphome:
@@ -92,7 +92,7 @@ output:
   - platform: ledc
     pin: 21
     id: led_erro
-    frequency: 10
+    frequency: 1000
 
 light:
   - platform: binary
