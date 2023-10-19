@@ -4,16 +4,16 @@ substitutions:
   room: ""
   device_description: "Sensor de 5 Niveis com relê"
   project_name: "Automakaza.Sensor 5 Niveis V2"
-  project_version: "2.03"
+  project_version: "2.04"
   relay_restore_mode: RESTORE_DEFAULT_OFF
 
 esphome:
   name: "${name}"
   friendly_name: "${friendly_name}"
+  name_add_mac_suffix: true
   project:
     name: "${project_name}"
     version: "${project_version}"
-#  name_add_mac_suffix: true
 
 esp32:
   board: esp32dev
