@@ -4,7 +4,7 @@ substitutions:
   room: ""
   device_description: "Sensor de 5 Niveis com relê"
   project_name: "Automakaza.Sensor 5 Niveis V2"
-  project_version: "2.04"
+  project_version: "2.05"
   relay_restore_mode: RESTORE_DEFAULT_OFF
 
 esphome:
@@ -92,7 +92,7 @@ output:
   - platform: ledc
     pin: 21
     id: led_erro
-    frequency: 1000
+    #frequency: 1000
 
 light:
   - platform: binary
@@ -123,12 +123,12 @@ light:
   - platform: monochromatic
     output: led_erro
     id: nivel_erro
- #   effects:
- #     - pulse:
- #         transition_length: 1s
- #         update_interval: 3s
- #         min_brightness: 0%
- #         max_brightness: 100%
+    effects:
+      - pulse:
+          transition_length: 1s
+          update_interval: 3s
+          min_brightness: 0%
+          max_brightness: 100%
 
   - platform: status_led
     pin: 2 #pino do led azul na placa do ESP32
