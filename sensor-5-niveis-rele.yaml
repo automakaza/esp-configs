@@ -1,10 +1,10 @@
 substitutions:
-  name: "sensor-5n-v2"
-  friendly_name: "Sensor 5 Niveis-V2"
+  name: "sensor-5n-cr-v1"
+  friendly_name: "Sensor 5 Niveis-CR-v1"
   room: ""
   device_description: "Sensor de 5 Niveis com relê"
-  project_name: "Automakaza.Sensor 5 Niveis V2"
-  project_version: "2.05"
+  project_name: "Automakaza.Sensor 5 Niveis CR-v1"
+  project_version: "1.01"
   relay_restore_mode: RESTORE_DEFAULT_OFF
 
 esphome:
@@ -20,15 +20,20 @@ esp32:
 
 # Enable logging
 logger:
-  level: DEBUG
+  level: INFO
 
 # Enable Home Assistant API
 api:
+#  encryption:
+#    key: "QDI87eT77FyPKX9ptb+0Y+ikRyUAUmcvi1QOuxb4348="
 
 ota:
+#  password: "e2c5a69d65a4cc0e269a10738d3ae83c"
 
 wifi:
   ap: {}
+#  ssid: !secret wifi_ssid
+#  password: !secret wifi_password
 
 # ativa um hotspot (captive portal) caso a conexão wifi falhe
 captive_portal:
@@ -140,25 +145,34 @@ switch:
     name: "Relé 10A"
     id: rele10a
 
-button:
-  - platform: restart
-    name: "▓ Reiniciar ▓"
-
-  - platform: factory_reset
-    name: "▓ Reset de Fábrica ▓"
-    id: Reset
-
-#  - platform: safe_mode
-#    name: "▓ Safe Mode ▓"
-#    internal: false
-
-     
 binary_sensor:
+  - platform: status
+    id: ha_conectado
+    name: "[ Status Servidor"
+    on_state:
+      then:
+        - if:
+            condition:
+              binary_sensor.is_on: ha_conectado
+            then:
+              #- light.turn_on: led_on_ha
+              - logger.log: 
+                  format: "Servidor HA CONECTADO"
+                  level: INFO
+
+            else:
+              #- light.turn_off: led_on_ha
+              - logger.log: 
+                  format: "Servidor HA DESCONECTADO"
+                  level: WARN
+
+
 ############ Sensor 1 - 20% ##############
   - platform: gpio
     id: sensor20
     filters:
-      - delayed_on: 80ms
+      - delayed_on: 500ms
+      - delayed_off: 5000ms
     publish_initial_state: True
     pin:
       number: 13
@@ -167,15 +181,22 @@ binary_sensor:
     on_press:
       then:
         - light.turn_off: nivel_20
+        - logger.log: 
+            format: "SENSOR 1 - Desativado"
+            level: INFO
     on_release:
       then:
         - light.turn_on: nivel_20
+        - logger.log: 
+            format: "SENSOR 1 - ATIVADO"
+            level: INFO
 
 ############ Sensor 2 - 40% ##############
   - platform: gpio
     id: sensor40
     filters:
-      - delayed_on: 80ms
+      - delayed_on: 500ms
+      - delayed_off: 5000ms
     pin:
       number: 25
       mode: INPUT_PULLUP
@@ -184,15 +205,22 @@ binary_sensor:
     on_press:
       then:
         - light.turn_off: nivel_40
+        - logger.log: 
+            format: "SENSOR 2 - Desativado"
+            level: INFO
     on_release:
       then:
         - light.turn_on: nivel_40
+        - logger.log: 
+            format: "SENSOR 2 - ATIVADO"
+            level: INFO
 
 ############ Sensor 3 - 60% ##############
   - platform: gpio
     id: sensor60
     filters:
-      - delayed_on: 80ms
+      - delayed_on: 500ms
+      - delayed_off: 5000ms
     pin:
       number: 14
       mode: INPUT_PULLUP
@@ -201,15 +229,22 @@ binary_sensor:
     on_press:
       then:
         - light.turn_off: nivel_60
+        - logger.log: 
+            format: "SENSOR 3 - Desativado"
+            level: INFO
     on_release:
       then:
         - light.turn_on: nivel_60
+        - logger.log: 
+            format: "SENSOR 3 - ATIVADO"
+            level: INFO
 
 ############ Sensor 4 - 80% ##############
   - platform: gpio
     id: sensor80
     filters:
-      - delayed_on: 80ms
+      - delayed_on: 500ms
+      - delayed_off: 5000ms
     pin:
       number: 27
       mode: INPUT_PULLUP
@@ -218,15 +253,22 @@ binary_sensor:
     on_press:
       then:
         - light.turn_off: nivel_80
+        - logger.log: 
+            format: "SENSOR 4 - Desativado"
+            level: INFO
     on_release:
       then:
         - light.turn_on: nivel_80
+        - logger.log: 
+            format: "SENSOR 4 - ATIVADO"
+            level: INFO
 
 ############ Sensor 5 - 100% ##############
   - platform: gpio
     id: sensor100
     filters:
-      - delayed_on: 80ms
+      - delayed_on: 500ms
+      - delayed_off: 5000ms
     pin:
       number: 26
       mode: INPUT_PULLUP
@@ -235,11 +277,55 @@ binary_sensor:
     on_press:
       then:
         - light.turn_off: nivel_100
+        - logger.log: 
+            format: "SENSOR 5 - Desativado"
+            level: INFO
     on_release:
       then:
         - light.turn_on: nivel_100
+        - logger.log: 
+            format: "SENSOR 5 - ATIVADO"
+            level: INFO
 
 text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "[ Endereço IP"
+      icon: mdi:ip
+    ssid:
+      name: "[ Conectado ao SSID"
+      icon: mdi:wifi
+    mac_address:
+      name: "[ Endereço MAC"
+      icon: mdi:identifier
+
+  - platform: template
+    name: "[ Uptime"
+    lambda: |-
+      uint32_t dur = id(uptime_s).state;
+      int dys = 0;
+      int hrs = 0;
+      int mnts = 0;
+      if (dur > 86399) {
+        dys = trunc(dur / 86400);
+        dur = dur - (dys * 86400);
+      }
+      if (dur > 3599) {
+        hrs = trunc(dur / 3600);
+        dur = dur - (hrs * 3600);
+      }
+      if (dur > 59) {
+        mnts = trunc(dur / 60);
+        dur = dur - (mnts * 60);
+      }
+      char buffer[32];
+      sprintf(buffer, "%ud %02uh %02um %02us", dys, hrs, mnts, dur);
+      return {buffer};
+    icon: mdi:clock-start
+    entity_category: "diagnostic"
+    update_interval: 15s
+
+# Verifica Status de erro nos sensores
   - platform: template
     name: "Status dos Sensores"
     id: falha_sensor
@@ -303,6 +389,10 @@ text_sensor:
           then:
             - light.turn_on: nivel_erro
             - switch.turn_off: rele10a
+            - logger.log: 
+                format: "ATENÇÃO!! FALHA NOS SENSORES"
+                level: WARN
+
           else:
             - light.turn_off: nivel_erro
 
@@ -366,18 +456,36 @@ text_sensor:
         return {"OFF"};
       }
 
-  - platform: wifi_info
-    ip_address:
-      name: "[ Endereço IP"
-    ssid:
-      name: "[ Conectado ao SSID"
-    mac_address:
-      name: "[ Endereço MAC"
-
 sensor:
-  - platform: wifi_signal
-    name: "[ Sinal WiFi:"
+  - platform: uptime
+    id: uptime_s
+    name: "[ Uptime Sec"
+    unit_of_measurement: "Sec"
+    disabled_by_default: true
+    update_interval: 15s
+    internal: True
+
+  - platform: wifi_signal # Mostra o sinal WiFi em db
+    id: wifi_signal_db
+    name: "[ Sinal WiFi dB:"
+    icon: mdi:wifi-strength-1
     update_interval: 60s
+
+  - platform: copy # Mostra o sinal WiFi em %
+    id: wifi_signal_perc
+    name: "[ Sinal WiFi %"
+    icon: mdi:wifi-strength-1
+    source_id: wifi_signal_db
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    entity_category: "diagnostic"
+    on_value:
+      then:
+       - logger.log: 
+          format: "Sinal WiFi: %.1f %%"
+          args: ['id(wifi_signal_perc).state']
+          level: INFO
 
   - platform: template
     id: nivel_agua 
@@ -418,3 +526,15 @@ sensor:
                  id(rele10a).turn_off();
                  }
                }
+
+button:
+  - platform: restart
+    name: "▓ Reiniciar ▓"
+
+  - platform: factory_reset
+    name: "▓ Reset de Fábrica ▓"
+    id: Reset
+
+#  - platform: safe_mode
+#    name: "▓ Safe Mode ▓"
+#    internal: false
