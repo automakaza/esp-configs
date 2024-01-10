@@ -1,9 +1,9 @@
 substitutions:
-  name: "sensor-5n-cr-v1"
-  friendly_name: "Sensor 5 Niveis-CR-v1"
+  name: "auni5cr"
+  friendly_name: "Auni5-CR"
   room: ""
-  device_description: "Sensor de 5 Niveis com relê"
-  project_name: "Automakaza.Sensor 5 Niveis CR-v1"
+  device_description: "Auni5 - Sensor de 5 Niveis com relê"
+  project_name: "Automakaza.Auni5-CR-Sensor 5 Niveis"
   project_version: "1.05"
   relay_restore_mode: RESTORE_DEFAULT_OFF
 
